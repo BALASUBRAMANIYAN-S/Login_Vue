@@ -26,9 +26,9 @@ export const RULES: Record<string, Rule[]> = {
   ],
 password:[
   (v: string) => !!v || 'Password is required',
-  (v: string) => (v && v.length >= 5) || 'Password must be at least 8 characters',
+  (v: string) => (v && v.length >= 5) || 'Password must be at least 5 characters',
   (v: string) => /[A-Z]/.test(v) || 'Must include one uppercase letter',
-  (v: string) => /[0-9]/.test(v) || 'Must include one number',
-  (v: string) => /[\W_]/.test(v) || 'Must include one special character (@, #, $, etc.)'
+  // (v: string) => /[0-9]/.test(v) || 'Must include one number',
+  // (v: string) => /[\W_]/.test(v) || 'Must include one special character (@, #, $, etc.)'
 ]
 }

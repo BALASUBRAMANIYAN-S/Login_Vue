@@ -19,7 +19,20 @@ const loading = ref(false)
 const passwordConfirmationRule = (val: string) => {
   return val === registerForm.value.password || 'Passwords do not match'
 }
-
+const SignIn=()=>{
+    loading.value = true
+     setTimeout(() => {
+    form.value.email = ''
+    form.value.password = ''
+    loading.value = false
+  }, 2000)
+}
+const SignUp=()=>{
+    setTimeout(()=>{loading.value = true},2000)
+    registerForm.value.email = ''
+    registerForm.value.password = ''
+    registerForm.value.confirmPassword = ''
+}
 </script>
 
 <template>
@@ -32,7 +45,7 @@ const passwordConfirmationRule = (val: string) => {
              <v-text-field v-model="form.email" :rules="RULES.email" label="Email" clearable />
              <v-text-field v-model="form.password" :rules="RULES.password" label="Password" type="password" clearable />
             <br />
-             <v-btn :disabled="!loginValid" :loading="loading" color="success" size="large" type="submit" variant="elevated" block> Sign In</v-btn>
+             <v-btn :disabled="!loginValid" :loading="loading" color="success" size="large" @click="SignIn" variant="elevated" block> Sign In</v-btn>
             </v-form><br>
             <!-- Register Form -->
             <v-form v-if="newLogin" v-model="registerValid">
@@ -40,7 +53,7 @@ const passwordConfirmationRule = (val: string) => {
              <v-text-field v-model="registerForm.password" :rules="RULES.password" label="Password" type="password" clearable />
              <v-text-field v-model="registerForm.confirmPassword" :rules="[...RULES.password, passwordConfirmationRule]" label="Confirm Password" type="password" clearable />
             <br />
-             <v-btn :disabled="!registerValid" :loading="loading" color="success" size="large" type="submit" variant="elevated" block> Sign UP</v-btn>
+             <v-btn :disabled="!registerValid" :loading="loading" color="success" size="large" @click="SignUp" variant="elevated" block> Sign UP</v-btn>
             </v-form><br>
             <!-- Create Or Sign In Buttons -->
             <div class="text-center">
