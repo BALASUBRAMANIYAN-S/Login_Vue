@@ -36,16 +36,32 @@ export const useAuthStore = defineStore('auth', {
         this.loading = false
       }
     },
-  },
-
-  async login (payload : any){
-     this.loading = true
+    async login(payload: any) {
+      this.loading = true
       this.error = null
+
       try {
-        const response = await fetch(`${API}/login/`,{
-            method : 'GET',
+        const response = await fetch(`${API}/login/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
         })
-        
+
+        if (!response.ok) {
+          throw new Error('Registration failed')
+        }
+
+        const data = await response.json()
+        return data
+
+      } catch (err: any) {
+        this.error = err.message
+        throw err
+      } finally {
+        this.loading = false
       }
-  }
+    },
+  },
 })
