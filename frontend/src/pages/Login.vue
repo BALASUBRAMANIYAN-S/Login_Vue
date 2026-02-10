@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { RULES } from '@/plugins'
 import { ref } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+const authStore = useAuthStore()
 
 const loginValid = ref(false)
 const registerValid = ref(false)
@@ -12,13 +14,10 @@ const form = ref({
 const registerForm = ref({
     email: '',
     password: '',
-    confirmPassword: ''
+    username: ''
 })
 const loading = ref(false)
 
-const passwordConfirmationRule = (val: string) => {
-  return val === registerForm.value.password || 'Passwords do not match'
-}
 const SignIn=()=>{
     loading.value = true
      setTimeout(() => {
@@ -27,12 +26,23 @@ const SignIn=()=>{
     loading.value = false
   }, 2000)
 }
-const SignUp=()=>{
-    setTimeout(()=>{loading.value = true},2000)
+const SignUp = async () => {
+  loading.value = true
+
+  try {
+    await authStore.register(registerForm.value)
+
+    // clear form only after success
     registerForm.value.email = ''
     registerForm.value.password = ''
-    registerForm.value.confirmPassword = ''
+    registerForm.value.username = ''
+  } catch (error) {
+    console.error('Signup failed')
+  } finally {
+    loading.value = false
+  }
 }
+
 </script>
 
 <template>
@@ -49,9 +59,9 @@ const SignUp=()=>{
             </v-form><br>
             <!-- Register Form -->
             <v-form v-if="newLogin" v-model="registerValid">
+             <v-text-field v-model="registerForm.username" label="username" type="username" clearable />
              <v-text-field v-model="registerForm.email" :rules="RULES.email" label="Email" clearable />
              <v-text-field v-model="registerForm.password" :rules="RULES.password" label="Password" type="password" clearable />
-             <v-text-field v-model="registerForm.confirmPassword" :rules="[...RULES.password, passwordConfirmationRule]" label="Confirm Password" type="password" clearable />
             <br />
              <v-btn :disabled="!registerValid" :loading="loading" color="success" size="large" @click="SignUp" variant="elevated" block> Sign UP</v-btn>
             </v-form><br>
