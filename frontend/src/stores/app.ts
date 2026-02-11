@@ -19,33 +19,28 @@ actions: {
     this.message = null;
 
     try {
-      const response = await fetch(api, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+  const res = await fetch(api, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
 
-      // 1. Parse the JSON once and store it in a variable
-      const data = await response.json();
+  const data = await res.json();
 
-      if (!response.ok) {
-        // Most backends send errors in a 'message' or 'detail' field
-        this.error = data.message || data.detail || "An error occurred";
-        return; 
-      }
+  if (!res.ok) {
+    this.error = data.message || "Error";
+    return;
+  }
 
-      // 2. Assign data to your state
-      this.user = data; 
-      this.message = "Login Successful!"; // Or data.message if your backend sends one
+  this.user = data;
+  this.message = "Success";
+  return data;
 
-      return data; // Return happens LAST
-
-    } catch (error: any) {
-      this.error = error.message || "Network Error";
-      console.error(error);
-    } finally {
-      this.loading = false;
-    }
+} catch (error: any) {
+  this.error = "Network Error";
+} finally {
+  this.loading = false;
+}
   },
 },
 })

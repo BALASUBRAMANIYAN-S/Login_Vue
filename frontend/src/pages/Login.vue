@@ -19,17 +19,7 @@ const registerForm = ref({
 const loading = ref(false)
 
 const SignIn=async ()=>{
-    try {
-        await authStore.login(Form.value)
-        loading.value = true
-    // clear form only after success
-    Form.value.email = ''
-    Form.value.password = ''
-  } catch (error) {
-    console.error('SignIn failed')
-  } finally {
-    loading.value = false
-  }
+    console.log(form.value.email)
 }
 const SignUp = async () => {
   loading.value = true
