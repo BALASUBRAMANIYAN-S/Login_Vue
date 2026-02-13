@@ -26,5 +26,5 @@ class LoginAPI(APIView):
         )
 
         if user:
-            return Response({"message": "Login success"})
-        return Response({"error": "Invalid credentials"}, status=401)
+            return Response({"Success":True,"message": "Login success","User_id":user.id})
+        return Response({"success": False,"error": "Invalid credentials"}, status=401)
