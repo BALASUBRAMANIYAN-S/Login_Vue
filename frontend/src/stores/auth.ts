@@ -49,16 +49,18 @@ export const useAuthStore = defineStore('auth', {
           body: JSON.stringify(payload),
         })
 
-        if (!response.ok) {
-          throw new Error('Registration failed')
-        }
-
         const data = await response.json()
-        return data
+
+        if (response.ok && data.Success){
+          return true
+        } else {
+          this.error = data.message
+          return false
+        }
 
       } catch (err: any) {
         this.error = err.message
-        throw err
+        return false
       } finally {
         this.loading = false
       }

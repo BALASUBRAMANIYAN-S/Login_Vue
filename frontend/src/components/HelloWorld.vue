@@ -1,42 +1,44 @@
-<script setup>
-import { ref } from 'vue';
-import { useAppStore } from '@/stores/app';
-import { useRouter } from 'vue-router'
 
-const store = useAppStore()
-const router = useRouter()
-
-const firstName = ref('')
-const lastName = ref('')
-
-const submit = async () => {
-  console.log('Submit clicked')
-  const result = await store.userDetails({
-    username: firstName.value,
-    password: lastName.value,
-  })
-
-  if (result && !store.error) {
-    firstName.value = ''
-    lastName.value = ''
-    try {
-      await router.push('/homeSection')
-    } catch (err) {
-      console.error('Navigation error:', err)
-    }
-  }
-}
-
-</script>
 <template>
-  <v-container>
-    <v-sheet class="mx-auto" width="300">
-      <v-form @submit.prevent="submit">
-        <v-text-field v-model="firstName" label="First name"></v-text-field>
+  <v-row>
+    <!-- Welcome -->
+    <v-col cols="12">
+      <v-card>
+        <v-card-title>
+          Welcome 👋
+        </v-card-title>
+        <v-card-text>
+          You are successfully logged in.
+        </v-card-text>
+      </v-card>
+    </v-col>
 
-        <v-text-field v-model="lastName" label="Last name"></v-text-field>
-        <v-btn class="mt-2" type="submit" block>Submit</v-btn>
-      </v-form>
-    </v-sheet>
-  </v-container>
+    <!-- Cards -->
+    <v-col cols="12" md="4">
+      <v-card color="blue-lighten-4">
+        <v-card-title>Profile</v-card-title>
+        <v-card-text>
+          View your profile details
+        </v-card-text>
+      </v-card>
+    </v-col>
+
+    <v-col cols="12" md="4">
+      <v-card color="green-lighten-4">
+        <v-card-title>Settings</v-card-title>
+        <v-card-text>
+          Manage account settings
+        </v-card-text>
+      </v-card>
+    </v-col>
+
+    <v-col cols="12" md="4">
+      <v-card color="orange-lighten-4">
+        <v-card-title>Reports</v-card-title>
+        <v-card-text>
+          View reports & data
+        </v-card-text>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>

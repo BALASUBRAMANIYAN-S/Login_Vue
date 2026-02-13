@@ -2,13 +2,16 @@
 import { RULES } from '@/plugins'
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
 const authStore = useAuthStore()
 
 const loginValid = ref(false)
 const registerValid = ref(false)
 const newLogin = ref (false)
 const form = ref({
-    email: '',
+    username: '',
     password: ''
 })
 const registerForm = ref({
@@ -18,9 +21,16 @@ const registerForm = ref({
 })
 const loading = ref(false)
 
-const SignIn=async ()=>{
-    console.log(form.value.email)
+const SignIn = async () => {
+  const success = await authStore.login(form.value)
+
+  if (success) {
+    form.value.username = ''
+    form.value.password = ''
+    router.push('/home')   // optional navigation
+  }
 }
+
 const SignUp = async () => {
   loading.value = true
 
@@ -47,7 +57,7 @@ const SignUp = async () => {
             <h2 v-else>Register Page</h2>
             <!-- Login Form -->
             <v-form v-if="!newLogin" v-model="loginValid">
-             <v-text-field v-model="form.email" :rules="RULES.email" label="Email" clearable />
+             <v-text-field v-model="form.username" label="Username" clearable />
              <v-text-field v-model="form.password" :rules="RULES.password" label="Password" type="password" clearable />
             <br />
              <v-btn :disabled="!loginValid" :loading="loading" color="success" size="large" @click="SignIn" variant="elevated" block> Sign In</v-btn>
