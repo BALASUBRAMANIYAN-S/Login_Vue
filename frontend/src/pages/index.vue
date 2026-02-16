@@ -5,7 +5,6 @@
 
   
 <template>
-  <HelloWorld />
-  
+<HelloWorld />
 </template>
 

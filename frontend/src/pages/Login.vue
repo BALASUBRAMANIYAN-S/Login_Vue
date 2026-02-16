@@ -1,82 +1,84 @@
 <script setup lang="ts">
-import { RULES } from '@/plugins'
 import { ref } from 'vue'
-import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
-const router = useRouter()
+import { useAuthStore } from '@/stores/auth'
+import { RULES } from '@/plugins'
 
+const router = useRouter()
 const authStore = useAuthStore()
 
 const loginValid = ref(false)
 const registerValid = ref(false)
-const newLogin = ref (false)
-const form = ref({
-    username: '',
-    password: ''
-})
-const registerForm = ref({
-    email: '',
-    password: '',
-    username: ''
-})
+const newLogin = ref(false)
 const loading = ref(false)
 
-const SignIn = async () => {
-  const success = await authStore.login(form.value)
+const form = ref({
+  username: '',
+  password: ''
+})
 
-  if (success) {
-    form.value.username = ''
-    form.value.password = ''
-    router.push('/home')   // optional navigation
+const registerForm = ref({
+  username: '',
+  email: '',
+  password: ''
+})
+
+const SignIn = async () => {
+  loading.value = true
+  try {
+    const success = await authStore.login(form.value)
+    if (success) {
+      form.value.username = ''
+      form.value.password = ''
+      router.push('/homeSection')
+    }
+  } catch (error) {
+    console.error('Login failed')
+  } finally {
+    loading.value = false
   }
 }
 
 const SignUp = async () => {
   loading.value = true
-
   try {
     await authStore.register(registerForm.value)
-
-    // clear form only after success
+    registerForm.value.username = ''
     registerForm.value.email = ''
     registerForm.value.password = ''
-    registerForm.value.username = ''
+    newLogin.value = false
   } catch (error) {
     console.error('Signup failed')
   } finally {
     loading.value = false
   }
 }
-
 </script>
 
 <template>
-    <v-sheet class="pa-12" rounded>
-        <v-card class="mx-auto px-6 py-8" max-width="344">
-            <h2 v-if="!newLogin">Login Page</h2>
-            <h2 v-else>Register Page</h2>
-            <!-- Login Form -->
-            <v-form v-if="!newLogin" v-model="loginValid">
-             <v-text-field v-model="form.username" label="Username" clearable />
-             <v-text-field v-model="form.password" :rules="RULES.password" label="Password" type="password" clearable />
-            <br />
-             <v-btn :disabled="!loginValid" :loading="loading" color="success" size="large" @click="SignIn" variant="elevated" block> Sign In</v-btn>
-            </v-form><br>
-            <!-- Register Form -->
-            <v-form v-if="newLogin" v-model="registerValid">
-             <v-text-field v-model="registerForm.username" label="username" type="username" clearable />
-             <v-text-field v-model="registerForm.email" :rules="RULES.email" label="Email" clearable />
-             <v-text-field v-model="registerForm.password" :rules="RULES.password" label="Password" type="password" clearable />
-            <br />
-             <v-btn :disabled="!registerValid" :loading="loading" color="success" size="large" @click="SignUp" variant="elevated" block> Sign UP</v-btn>
-            </v-form><br>
-            <!-- Create Or Sign In Buttons -->
-            <div class="text-center">
-                <span v-if="!newLogin" class="text-body-2 text-medium-emphasis">New user? </span>
-                <span v-if="newLogin" class="text-body-2 text-medium-emphasis">Alredy I Have? </span>
-                <v-btn v-if="newLogin" variant="text" color="primary" class="text-none pa-0" @click="newLogin = false">Sign In</v-btn>
-                <v-btn v-if="!newLogin" variant="text" color="primary" class="text-none pa-0" @click="newLogin = true">Create an Account</v-btn>
-            </div>
-        </v-card>
-    </v-sheet>
+  <v-sheet class="pa-12" rounded>
+    <v-card class="mx-auto px-6 py-8" max-width="344">
+      <h2 class="text-center mb-4">{{ newLogin ? 'Register Page' : 'Login Page' }}</h2>
+      <v-form v-if="!newLogin" v-model="loginValid">
+        <v-text-field v-model="form.username" label="Username" :rules="RULES.required" clearable />
+        <v-text-field v-model="form.password" label="Password" type="password" :rules="RULES.password" clearable/>
+        <v-btn color="success" size="large" block :disabled="!loginValid" :loading="loading" @click="SignIn" >Sign In</v-btn>
+      </v-form>
+      <!-- REGISTER FORM -->
+      <v-form v-else v-model="registerValid">
+        <v-text-field v-model="registerForm.username" label="Username" :rules="RULES.required" clearable/>
+        <v-text-field v-model="registerForm.email" label="Email" :rules="RULES.email" clearable />
+        <v-text-field v-model="registerForm.password" label="Password" type="password" :rules="RULES.password" clearable/>
+        <v-btn color="success" size="large" block :disabled="!registerValid" :loading="loading" @click="SignUp" >Sign Up</v-btn>
+      </v-form>
+
+      <div class="text-center mt-4">
+        <span class="text-body-2 text-medium-emphasis">
+          {{ newLogin ? 'Already have an account?' : 'New user?' }}
+        </span>
+        <v-btn variant="text" color="primary"class="text-none pa-0"@click="newLogin = !newLogin">{{ newLogin ? 'Sign In' : 'Create an Account' }}</v-btn>
+      </div>
+
+    </v-card>
+  </v-sheet>
 </template>
