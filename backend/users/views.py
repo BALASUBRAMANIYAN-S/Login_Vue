@@ -25,6 +25,7 @@ class LoginAPI(APIView):
             password=request.data.get('password')
         )
 
+
         if user:
             return Response({"Success":True,"message": "Login success","User_id":user.id})
         return Response({"success": False,"error": "Invalid credentials"}, status=401)
