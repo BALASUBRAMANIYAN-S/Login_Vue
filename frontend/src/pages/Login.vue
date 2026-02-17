@@ -30,10 +30,10 @@ const SignIn = async () => {
     if (success) {
       form.value.username = ''
       form.value.password = ''
-      router.push('/homeSection')
+      router.push('/')
     }
   } catch (error) {
-    console.error('Login failed')
+    console.error('Login failed', error)
   } finally {
     loading.value = false
   }
@@ -47,8 +47,9 @@ const SignUp = async () => {
     registerForm.value.email = ''
     registerForm.value.password = ''
     newLogin.value = false
+    authStore.error = 'Registration successful! Please sign in.'
   } catch (error) {
-    console.error('Signup failed')
+    console.error('Signup failed', error)
   } finally {
     loading.value = false
   }
@@ -59,6 +60,12 @@ const SignUp = async () => {
   <v-sheet class="pa-12" rounded>
     <v-card class="mx-auto px-6 py-8" max-width="344">
       <h2 class="text-center mb-4">{{ newLogin ? 'Register Page' : 'Login Page' }}</h2>
+      
+      <!-- Error Message -->
+      <v-alert v-if="authStore.error" type="error" class="mb-4" closable>
+        {{ authStore.error }}
+      </v-alert>
+
       <v-form v-if="!newLogin" v-model="loginValid">
         <v-text-field v-model="form.username" label="Username" :rules="RULES.required" clearable />
         <v-text-field v-model="form.password" label="Password" type="password" :rules="RULES.password" clearable/>
